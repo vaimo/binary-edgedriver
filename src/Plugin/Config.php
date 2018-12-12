@@ -47,86 +47,83 @@ class Config
     
     public function getRequestUrlConfig()
     {
-        $baseUrl = 'https://edgedriver.storage.googleapis.com';
+        $baseUrl = 'https://download.microsoft.com/download';
         
         return [
-            self::REQUEST_VERSION => sprintf('%s/LATEST_RELEASE', $baseUrl),
-            self::REQUEST_DOWNLOAD => sprintf('%s/{{version}}/{{file}}', $baseUrl)
+            self::REQUEST_VERSION => false,
+            self::REQUEST_DOWNLOAD => sprintf('%s/{{hash}}/{{file}}', $baseUrl)
         ];
     }
     
     public function getBrowserBinaryPaths()
     {
         return [
-            Platform::TYPE_LINUX32 => [
-                '/usr/bin/google-chrome'
-            ],
-            Platform::TYPE_LINUX64 => [
-                '/usr/bin/google-chrome'
-            ],
-            Platform::TYPE_MAC64 => [
-                '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
-            ]
+            Platform::TYPE_LINUX32 => [],
+            Platform::TYPE_LINUX64 => [],
+            Platform::TYPE_MAC64 => [],
+            Platform::TYPE_WIN32 => [],
+            Platform::TYPE_WIN64 => []
         ];
     }
     
     public function getBrowserVersionPollingConfig()
     {
         return [
-            '%s -version' => ['Google Chrome %s']  
+            'powershell.exe "Get-AppxPackage Microsoft.MicrosoftEdge | %{echo $_.version}"' => ['%s']
         ];
     }
     
     public function getDriverVersionPollingConfig()
     {
         return [
-            '%s --version' => ['EdgeDriver %s (']
+            'wmic datafile where name="%s" get Version /value' => ['Version=%s']
         ];
     }
     
     public function getBrowserDriverVersionMap()
     {
         return [
-            '72' => '',
-            '69' => '2.44',
-            '68' => '2.42',
-            '67' => '2.41',
-            '66' => '2.40',
-            '65' => '2.38',
-            '64' => '2.37',
-            '63' => '2.36',
-            '62' => '2.35',
-            '61' => '2.34',
-            '60' => '2.33',
-            '57' => '2.28',
-            '54' => '2.25',
-            '53' => '2.24',
-            '51' => '2.22',
-            '44' => '2.19',
-            '42' => '2.15',
-            '1' => '2.0'
+            '18.00000' => '',
+            '17.17134' => '6.17134',
+            '16.16299' => '5.16299',
+            '15.15063' => '4.15063',
+            '14.14393' => '3.14393',
+            '13.10586' => '2.10586',
+            '12.10240' => '1.10240'
         ];
     }
+    public function getDriverVersionHashMap()
+    {
+        return [
+            '6.17134' => 'F/8/A/F8AF50AB-3C3A-4BC4-8773-DC27B32988DD',
+            '5.16299' => 'D/4/1/D417998A-58EE-4EFE-A7CC-39EF9E020768',
+            '4.15063' => '3/4/2/342316D7-EBE0-4F10-ABA2-AE8E0CDF36DD',
+            '3.14393' => '3/2/D/32D3E464-F2EF-490F-841B-05D53C848D15',
+            '2.10586' => 'C/0/7/C07EBF21-5305-4EC8-83B1-A6FCC8F93F45',
+            '1.10240' => '8/D/0/8D0D08CF-790D-4586-B726-C6469A9ED49C',
+        ];
+    }
+    
     
     public function getRemoteFileNames()
     {
         return [
-            Platform::TYPE_LINUX32 => 'edgedriver_linux32.zip',
-            Platform::TYPE_LINUX64 => 'edgedriver_linux64.zip',
-            Platform::TYPE_MAC64 => 'edgedriver_mac64.zip',
-            Platform::TYPE_WIN32 => 'edgedriver_win32.zip',
-            Platform::TYPE_WIN64 => 'edgedriver_win32.zip'
+            Platform::TYPE_LINUX32 => '',
+            Platform::TYPE_LINUX64 => '',
+            Platform::TYPE_MAC64 => '',
+            Platform::TYPE_WIN32 => 'MicrosoftWebDriver.exe',
+            Platform::TYPE_WIN64 => 'MicrosoftWebDriver.exe'
         ];
     }
 
     public function getExecutableFileNames()
     {
         return [
-            Platform::TYPE_LINUX32 => 'edgedriver',
-            Platform::TYPE_LINUX64 => 'edgedriver',
-            Platform::TYPE_MAC64 => 'edgedriver',
-            Platform::TYPE_WIN32 => 'edgedriver.exe',
-            Platform::TYPE_WIN64 => 'edgedriver.exe'
+            Platform::TYPE_LINUX32 => '',
+            Platform::TYPE_LINUX64 => '',
+            Platform::TYPE_MAC64 => '',
+            Platform::TYPE_WIN32 => 'MicrosoftWebDriver.exe',
+            Platform::TYPE_WIN64 => 'MicrosoftWebDriver.exe'
         ];
     }
 }
