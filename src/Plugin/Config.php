@@ -5,13 +5,10 @@
  */
 namespace Vaimo\EdgeDriver\Plugin;
 
-use Vaimo\EdgeDriver\Installer\PlatformAnalyser as Platform;
+use Vaimo\WebDriverBinaryDownloader\Interfaces\PlatformAnalyserInterface as Platform;
 
-class Config
+class Config implements \Vaimo\WebDriverBinaryDownloader\Interfaces\ConfigInterface
 {
-    const REQUEST_VERSION = 'version';
-    const REQUEST_DOWNLOAD = 'download';
-    
     /**
      * @var \Composer\Package\PackageInterface
      */
@@ -92,6 +89,7 @@ class Config
             '12.10240' => '1.10240'
         ];
     }
+    
     public function getDriverVersionHashMap()
     {
         return [

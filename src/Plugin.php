@@ -7,14 +7,8 @@ namespace Vaimo\EdgeDriver;
 
 class Plugin implements \Composer\Plugin\PluginInterface, \Composer\EventDispatcher\EventSubscriberInterface
 {
-    /**
-     * @var \Vaimo\EdgeDriver\Installer
-     */
-    private $driverInstaller;
-
     public function activate(\Composer\Composer $composer, \Composer\IO\IOInterface $io)
     {
-        $this->driverInstaller = new \Vaimo\EdgeDriver\Installer($composer, $io);
     }
     
     public static function getSubscribedEvents()
@@ -25,8 +19,15 @@ class Plugin implements \Composer\Plugin\PluginInterface, \Composer\EventDispatc
         ];
     }
     
-    public function installDriver()
+    public function installDriver(\Composer\Script\Event $event)
     {
-        $this->driverInstaller->execute();
+        $composerRuntime = $event->getComposer();
+        $io = $event->getIo();
+
+        $driverInstaller = new \Vaimo\WebDriverBinaryDownloader\Installer($composerRuntime, $io);
+        
+        $pluginConfig = new \Vaimo\EdgeDriver\Plugin\Config($composerRuntime->getPackage());
+
+        $driverInstaller->executeWithConfig($pluginConfig);
     }
 }
