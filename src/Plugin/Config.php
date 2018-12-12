@@ -58,22 +58,22 @@ class Config implements \Vaimo\WebDriverBinaryDownloader\Interfaces\ConfigInterf
             Platform::TYPE_LINUX32 => [],
             Platform::TYPE_LINUX64 => [],
             Platform::TYPE_MAC64 => [],
-            Platform::TYPE_WIN32 => [],
-            Platform::TYPE_WIN64 => []
+            Platform::TYPE_WIN32 => [null],
+            Platform::TYPE_WIN64 => [null]
         ];
     }
     
     public function getBrowserVersionPollingConfig()
     {
         return [
-            'powershell.exe "Get-AppxPackage Microsoft.MicrosoftEdge | %{echo $_.version}"' => ['%s']
+            'powershell.exe "Get-AppxPackage Microsoft.MicrosoftEdge | %%{echo $_.version}"' => ['([0-9].+)']
         ];
     }
     
     public function getDriverVersionPollingConfig()
     {
         return [
-            'wmic datafile where name="%s" get Version /value' => ['Version=%s']
+            'wmic datafile where name="%s" get Version /value' => ['Version=([0-9].+)']
         ];
     }
     
@@ -81,12 +81,12 @@ class Config implements \Vaimo\WebDriverBinaryDownloader\Interfaces\ConfigInterf
     {
         return [
             '18.00000' => '',
-            '17.17134' => '6.17134',
-            '16.16299' => '5.16299',
-            '15.15063' => '4.15063',
-            '14.14393' => '3.14393',
-            '13.10586' => '2.10586',
-            '12.10240' => '1.10240'
+            '17.17134' => ['6.17134', '10.0.17134.1'],
+            '16.16299' => ['5.16299', '10.0.16299.15'],
+            '15.15063' => ['4.15063', '10.0.15063.0'],
+            '14.14393' => ['3.14393', '10.0.14393.0'],
+            '13.10586' => ['2.10586', '10.0.10586.0'],
+            '12.10240' => ['1.10240', '10.0.10240.0']
         ];
     }
     

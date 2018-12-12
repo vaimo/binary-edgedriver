@@ -1,4 +1,11 @@
 {
+    "1.0.1": {
+        "fix": [
+            "installed driver version not detected correctly due to multiple versioning schemes being used",
+            "browser version polling issue where due to the fact that no binary is referred to, polling never happened",
+            "syntax error in the driver version polling command configuration"
+        ]
+    },
     "1.0.0": {
         "feature": [
             "download Microsoft Edge Driver binary and rename it to edgedriver.exe",

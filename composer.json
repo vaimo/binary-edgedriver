@@ -5,7 +5,7 @@
     "description": "Utility for downloading Microsoft Edge Driver binary with browser version detection",
     "require": {
         "composer-plugin-api": "^1.0",
-        "vaimo/webdriver-binary-downloader": "^1.0.0"
+        "vaimo/webdriver-binary-downloader": "^2.0.0"
     },
     "require-dev": {
         "composer/composer": "~1.0",
