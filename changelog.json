@@ -1,5 +1,5 @@
 {
-    "DEV.1.0.0": {
+    "1.0.0": {
         "feature": [
             "download Microsoft Edge Driver binary and rename it to edgedriver.exe",
             "version detection logic for Edge"
