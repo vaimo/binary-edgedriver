@@ -10,6 +10,11 @@ use Vaimo\EdgeDriver\Installer\PlatformAnalyser as OsDetector;
 class PackageManager
 {
     /**
+     * @var \Vaimo\EdgeDriver\Plugin\Config
+     */
+    private $pluginConfig;
+    
+    /**
      * @var \Vaimo\EdgeDriver\Installer\PlatformAnalyser
      */
     private $platformAnalyser;
@@ -23,9 +28,15 @@ class PackageManager
      * @var \Composer\Util\Filesystem
      */
     private $fileSystem;
-    
-    public function __construct() 
-    {
+
+    /**
+     * @param \Vaimo\EdgeDriver\Plugin\Config $pluginConfig
+     */
+    public function __construct(
+        \Vaimo\EdgeDriver\Plugin\Config $pluginConfig
+    ) {
+        $this->pluginConfig = $pluginConfig;
+        
         $this->platformAnalyser = new \Vaimo\EdgeDriver\Installer\PlatformAnalyser();
         $this->utils = new \Vaimo\EdgeDriver\Installer\Utils();
         $this->fileSystem = new \Composer\Util\Filesystem();
@@ -70,15 +81,15 @@ class PackageManager
             
             throw new \Exception($errorMessage);
         }
-
-        $executables = array_filter($matches, function ($path) {
-            return is_executable($path);
-        });
-
+        
+        $fileRenames = $this->pluginConfig->getExecutableFileRenames();
+        
         $this->fileSystem->ensureDirectoryExists($binDir);
 
-        foreach ($executables as $fromPath) {
-            $toPath = $binDir . DIRECTORY_SEPARATOR . basename($fromPath);
+        foreach (array_filter($matches, 'is_executable') as $fromPath) {
+            $fileName = basename($fromPath);
+  
+            $toPath = $binDir . DIRECTORY_SEPARATOR . ($fileRenames[$fileName] ?? $fileName);
 
             $this->fileSystem->copyThenRemove($fromPath, $toPath);
 

@@ -61,6 +61,15 @@ class ProjectAnalyser
         $this->utils = new \Vaimo\EdgeDriver\Installer\Utils();
     }
     
+    public function resolvePlatformSupport()
+    {
+        $platformCode = $this->platformAnalyser->getPlatformCode();
+        
+        $fileNames = $this->pluginConfig->getExecutableFileNames();
+
+        return (bool)($fileNames[$platformCode] ?? false);
+    }
+    
     public function resolveInstalledDriverVersion($binaryDir)
     {
         $platformCode = $this->platformAnalyser->getPlatformCode();
@@ -74,8 +83,10 @@ class ProjectAnalyser
 
         $executableName = $executableNames[$platformCode];
 
+        $driverPath = realpath($this->utils->composePath($binaryDir, $executableName));
+        
         return $this->versionResolver->pollForVersion(
-            [$this->utils->composePath($binaryDir, $executableName)],
+            [$driverPath],
             $this->pluginConfig->getDriverVersionPollingConfig()
         );
     }

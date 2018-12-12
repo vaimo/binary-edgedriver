@@ -18,11 +18,6 @@ class Installer
     private $io;
     
     /**
-     * @var \Vaimo\EdgeDriver\Installer\PackageManager 
-     */
-    private $packageManager;
-
-    /**
      * @var \Vaimo\EdgeDriver\Installer\Utils 
      */
     private $utils;
@@ -37,8 +32,7 @@ class Installer
     ) {
         $this->composerRuntime = $composerRuntime;
         $this->io = $io;
-
-        $this->packageManager = new \Vaimo\EdgeDriver\Installer\PackageManager();
+        
         $this->utils = new \Vaimo\EdgeDriver\Installer\Utils();
     }
     
@@ -47,29 +41,39 @@ class Installer
         $binaryDir = $this->composerRuntime->getConfig()->get('bin-dir');
 
         $pluginConfig = new \Vaimo\EdgeDriver\Plugin\Config($this->composerRuntime->getPackage());
+        
         $projectAnalyser = new \Vaimo\EdgeDriver\Installer\ProjectAnalyser($pluginConfig);
+        $packageManager = new \Vaimo\EdgeDriver\Installer\PackageManager($pluginConfig);
+
+        $driverName = $pluginConfig->getDriverName();
+        
+        if (!$projectAnalyser->resolvePlatformSupport()) {
+            if ($this->io->isVerbose()) {
+                $this->io->write(
+                    sprintf('SKIPPING %s setup: platform not supported', $driverName)
+                );
+            }
+            
+            return;
+        }
         
         $version = $projectAnalyser->resolveRequiredDriverVersion();
-
-        if ($this->io->isVerbose()) {
-            $this->io->write(sprintf('<comment>Using version %s</comment>', $version));
-        }
 
         $currentVersion = $projectAnalyser->resolveInstalledDriverVersion($binaryDir);
 
         if (strpos($currentVersion, $version) === 0) {
             if ($this->io->isVerbose()) {
-                $this->io->write(sprintf('Required version (v%s) already installed', $version));
+                $this->io->write(
+                    sprintf('Required version (v%s) already installed', $version)
+                );
             }
 
             return;
         }
         
-        $this->io->write(sprintf(
-            '<info>Installing <comment>%s</comment> (v%s)</info>',
-            $pluginConfig->getDriverName(),
-            $version
-        ));
+        $this->io->write(
+            sprintf('<info>Installing <comment>%s</comment> (v%s)</info>', $driverName, $version)
+        );
 
         $localRepository = $this->composerRuntime->getRepositoryManager()
             ->getLocalRepository();
@@ -89,17 +93,22 @@ class Installer
         try {
             $package = $downloadManager->downloadRelease([$version]);
         } catch (\Exception $exception) {
-            $this->io->error($exception->getMessage());
+            $this->io->write(
+                sprintf('<error>%s</error>', $exception->getMessage())
+            );
+            
             return;
-        }
+        } 
   
         try {
-            $this->packageManager->installBinaries($package, $binaryDir);
+            $packageManager->installBinaries($package, $binaryDir);
 
             $this->io->write('');
             $this->io->write('<info>Done</info>');
         } catch (\Exception $exception) {
-            $this->io->error($exception->getMessage());
+            $this->io->write(
+                sprintf('<error>%s</error>', $exception->getMessage())
+            );
         }
     }
 

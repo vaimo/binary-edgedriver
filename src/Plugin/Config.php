@@ -104,7 +104,6 @@ class Config
         ];
     }
     
-    
     public function getRemoteFileNames()
     {
         return [
@@ -120,10 +119,17 @@ class Config
     {
         return [
             Platform::TYPE_LINUX32 => '',
-            Platform::TYPE_LINUX64 => '',
+            Platform::TYPE_LINUX64 => '', 
             Platform::TYPE_MAC64 => '',
             Platform::TYPE_WIN32 => 'MicrosoftWebDriver.exe',
             Platform::TYPE_WIN64 => 'MicrosoftWebDriver.exe'
+        ];
+    }
+
+    public function getExecutableFileRenames()
+    {
+        return [
+            'MicrosoftWebDriver.exe' => 'edgedriver.exe'
         ];
     }
 }

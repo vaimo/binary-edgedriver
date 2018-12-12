@@ -76,11 +76,12 @@ class DownloadManager
         
         while ($version = array_shift($versions)) {
             $package = $this->createComposerVirtualPackage($version, $targetDir);
-
+            
             try {
+                /** @var \Composer\Downloader\DownloaderInterface $downloader */
                 $downloader = $this->downloadManager->getDownloaderForInstalledPackage($package);
 
-                $downloader->download($package, $targetDir, false);
+                $downloader->download($package, $targetDir);
                 
                 return $package;
             } catch (\Composer\Downloader\TransportException $exception) {
@@ -116,25 +117,51 @@ class DownloadManager
         
         $platformCode = $this->platformAnalyser->getPlatformCode();
 
+        $ownerName = $this->ownerPackage->getName();
+        
         $package = new \Composer\Package\Package(
-            sprintf('%s-virtual-package', $this->ownerPackage->getName()),
+            sprintf('%s-virtual-package', $ownerName),
             $this->versionParser->normalize($version),
             $version
         );
         
         $executableNames = $this->pluginConfig->getExecutableFileNames();
 
-        $executableName = $executableNames[$platformCode];
+        $executableName = $executableNames[$platformCode] ?? '';
+        
+        if (!$executableName) {
+            $platformName = $this->platformAnalyser->getPlatformName();
+
+            throw new \Vaimo\EdgeDriver\Exceptions\PlatformNotSupportedException(
+                sprintf('The package %s does not support platform: %s', $ownerName, $platformName)
+            );
+        }
 
         $package->setBinaries([$executableName]);
         $package->setInstallationSource('dist');
-        $package->setDistType(pathinfo($remoteFile, PATHINFO_EXTENSION) === 'zip' ? 'zip' : 'tar');
+        
+        $package->setDistType(
+            $this->resolveDistType($remoteFile)
+        );
+        
         $package->setTargetDir($targetDir);
         $package->setDistUrl($remoteFile);
 
         return $package;
     }
 
+    private function resolveDistType($remoteFile)
+    {
+        switch (pathinfo($remoteFile, PATHINFO_EXTENSION)) {
+            case 'zip':
+                return 'zip';
+            case 'exe':
+                return 'file';
+        }
+
+        return 'tar';
+    }
+    
     private function getDownloadUrl($version)
     {
         $requestConfig = $this->pluginConfig->getRequestUrlConfig();
@@ -147,14 +174,18 @@ class DownloadManager
             throw new \Exception('Failed to resolve a file for the platform. Download driver manually');
         }
 
-        $remoteFileName = $this->utils->stringFromTemplate(
+        $driverHashes = $this->pluginConfig->getDriverVersionHashMap();
+        
+        $fileHash = $driverHashes[$version] ?? '';
+        
+        $fileName = $this->utils->stringFromTemplate(
             $remoteFiles[$platformCode],
-            ['version' => $version]
+            ['version' => $version, 'hash' => $fileHash]
         );
         
         return $this->utils->stringFromTemplate(
             $requestConfig[Config::REQUEST_DOWNLOAD],
-            ['version' => $version, 'file' => $remoteFileName]
+            ['version' => $version, 'file' => $fileName, 'hash' => $fileHash]
         );
     }
 }
