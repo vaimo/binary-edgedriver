@@ -1,0 +1,51 @@
+{
+    "name": "vaimo/binary-edgedriver",
+    "type": "composer-plugin",
+    "license": "MIT",
+    "description": "Utility for downloading Microsoft Edge Driver binary with browser version detection",
+    "require": {
+        "composer-plugin-api": "^1.0"
+    },
+    "require-dev": {
+        "vaimo/composer-changelogs": "^0.9.1"
+    },
+    "authors": [
+        {
+            "name": "Allan Paiste",
+            "email": "allan.paiste@vaimo.com"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/vaimo/binary-edgedriver",
+        "docs": "https://github.com/vaimo/binary-edgedriver",
+        "issues": "https://github.com/vaimo/binary-edgedriver/issues"
+    },
+    "keywords": [
+        "edgedriver",
+        "microsoft edge automation",
+        "testing",
+        "composer plugin",
+        "composer extension",
+        "test-automation",
+        "acceptance testing",
+        "browser testing",
+        "composer plugin",
+        "composer extension",
+        "browser driver",
+        "webdriver",
+        "downloader",
+        "binary downloader",
+        "binary"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Vaimo\\EdgeDriver\\": "src"
+        }
+    },
+    "extra": {
+        "class": "Vaimo\\EdgeDriver\\Plugin",
+        "changelog": {
+            "source": "changelog.json"
+        }
+    }
+}
