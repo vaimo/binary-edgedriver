@@ -1,5 +1,10 @@
 # binary-edgedriver
 
+[![Latest Stable Version](https://poser.pugx.org/vaimo/binary-edgedriver/v/stable)](https://packagist.org/packages/vaimo/binary-edgedriver)
+[![Total Downloads](https://poser.pugx.org/vaimo/binary-edgedriver/downloads)](https://packagist.org/packages/vaimo/binary-edgedriver)
+[![Daily Downloads](https://poser.pugx.org/vaimo/binary-edgedriver/d/daily)](https://packagist.org/packages/vaimo/binary-edgedriver)
+[![License](https://poser.pugx.org/vaimo/binary-edgedriver/license)](https://packagist.org/packages/vaimo/binary-edgedriver)
+
 Downloads Microsoft Edge Driver binary on Windows.
 
 The binary version is determined by the following factors:
